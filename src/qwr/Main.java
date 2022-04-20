@@ -1,5 +1,8 @@
 package qwr;
 
+import java.util.Arrays;
+import java.util.stream.Stream;
+
 import static qwr.Main.prnq;
 import static qwr.Main.prnt;
 
@@ -37,29 +40,16 @@ public class Main {
         q.printList("BBB");
         q.reverse();
         q.printList("CCC");
-//            Node node1 = new Node(1);
-//            Node node2 = new Node(2);
-//            Node node3 = new Node(3);
-//            Node node4 = new Node(27);
-//            List list1 = new List(node1);
-//
-//            node1.setNextNode(node2);
-//            node2.setNextNode(node3);
-//            node3.setNextNode(node4);
-//
-//            list1.push(-4);
-//            list1.push(1000, 0);
-//            list1.printList();
-//            list1.pop(2);
-////            list1.pushHead(0);
-//            list1.printList();
 
+        q.toStream().forEach(s->prnq("~ "+s.getValue().toString()));
+        q.toStream().forEach(s->prnq("+ "+s.toString()));
+        q.toSStream().forEach(s->prnq("% "+s.toString()));
     }//main
     //Определить количество слов в списке,
     // которые начинаются и заканчиваются на одну букву.
     public static int wQer(ListGns x){
         int z=0;
-        for (NodeGns j:x.integr() ) {
+        for (NodeGns j:x.toArray() ) {
             String h =j.getValue().toString();
             if (h.charAt(0)==h.charAt(h.length()-1)) z++;
         }
@@ -68,7 +58,7 @@ public class Main {
     //Проверить, что каждое следующее слово в
     // списке начинается с последней буквы предыдущего.
     public static boolean wQtt(ListGns x){
-        NodeGns[] y = x.integr();
+        NodeGns[] y = x.toArray();
         if (y.length<2) return false;
         assert prnq("~~"+y[0].getValue().toString());
         char hs = y[0].getValue().toString().charAt(y[0].getValue().toString().length()-1);
@@ -83,7 +73,7 @@ public class Main {
     // с первым (последним) словом списка.
     public static int wQtq(ListGns x){
         int z=0;
-        NodeGns[] y = x.integr();
+        NodeGns[] y = x.toArray();
         String h = y[0].getValue().toString();
         for (int i = 1; i < y.length; i++) {
             if (h.equals(y[i].getValue().toString())) z++;
@@ -92,7 +82,7 @@ public class Main {
     }//wQtq
     //Проверить, упорядочены ли элементы списка по алфавиту.
     public static boolean wQtb(ListGns x) {
-        NodeGns[] y = x.integr();
+        NodeGns[] y = x.toArray();
         for (int i = 1; i < y.length; i++) {
             int h= y[i-1].getValue().toString().compareTo(y[i].getValue().toString());
             if (h>0) return false;
@@ -254,6 +244,9 @@ class NodeGns<T> {//обобщения или generics
     public T  getValue() { return value; }
     public void setValue(T value) { this.value = value; }
     public void setNextNode(NodeGns nextNode) { this.nextNode = nextNode; }
+
+    @Override
+    public String toString() { return value.toString(); }
 }//class NodeGns----------------------------------------------------------------
 class ListGns {
     private NodeGns head;
@@ -304,7 +297,7 @@ class ListGns {
         }
         return j;
     }//length---------------------------------------------
-    public NodeGns[] integr(){
+    public NodeGns[] toArray(){
         int q = this.length();
         NodeGns[] z= new NodeGns [q];
         NodeGns nodeTmp = this.head;
@@ -314,7 +307,14 @@ class ListGns {
             nodeTmp = nodeTmp.getNextNode();
         }
         return z;
-    }//integr------------------------------------------------
+    }//toArray------------------------------------------------
+    public Stream<NodeGns> toStream(){
+        return Arrays.stream(this.toArray());
+    }//toStream-----------------------------------------------
+    public Stream toSStream(){
+        return Arrays.stream(this.toArray());
+    }//toStream-----------------------------------------------
+
     public void reverse(){//Перевернуть список наоборот.
         NodeGns nodeTmp = this.head;
         NodeGns tmpA = null;
