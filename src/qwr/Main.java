@@ -1,6 +1,9 @@
 package qwr;
 
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static qwr.Main.prnq;
@@ -29,22 +32,36 @@ public class Main {
         y.pushHead(tmp);
         y.printList("Поменять местами");
 
-        ListGns q = new ListGns("acbf","bcdr","cfgj","dfqa");
+        ListGns q = new ListGns("acbf","bcdb","cfgj","dcbf","efqd");
         q.printList();
-        q.push("dfg");
+        q.push("zfg");
         q.printList("AAA");
-        prnq("количество слов в списке "+wQer(q));
+        prnq("количество слов в списке способ-1 "+wQer(q));
+        prnq("количество слов в списке способ-2 "+wiQer(q));
         prnq("каждое следующее слово... "+(wQtt(q) ? "Yes" : "No"));
-        prnq("которые совпадают с первым "+wQtq(q));
-        prnq("упорядочены ли элементы списка по алфавиту "+(wQtb(q) ? "Yes" : "No"));
+        prnq("которые совпадают с первым способ-1 "+wQtq(q));
+        prnq("которые совпадают с первым способ-2 "+wiQtq(q));
+        prnq("упорядочены ли элементы списка по алфавиту (1) "+(wQtb(q) ? "Yes" : "No"));
+        prnq("упорядочены ли элементы списка по алфавиту (2) "+(wiQtb(q) ? "Yes" : "No"));
         q.printList("BBB");
         q.reverse();
         q.printList("CCC");
 
-        q.toStream().forEach(s->prnq("~ "+s.getValue().toString()));
-        q.toStream().forEach(s->prnq("+ "+s.toString()));
-        q.toSStream().forEach(s->prnq("% "+s.toString()));
-    }//main
+//        q.toStream().forEach(s->prnq("~ "+s.getValue().toString()));
+//        q.toStream().forEach(s->prnq("+ "+s.toString()));
+//        q.toSStream().forEach(s->prnq("% "+s.toString()));
+        //итератор
+        ListIterator lsti = new ListIterator(q);
+//        while (lsti.hasNext())
+//        prnt("_"+lsti.next().getValue());
+//        prnq("");
+        lsti.forEachRemaining((node)->prnt("+"+node.toString()));
+
+        for (NodeGns j:q.toArray() ) { prnt(" "+j.getValue()); }
+        prnq("");
+
+
+    }//main--------------------------------------------------------------------------------------------
     //Определить количество слов в списке,
     // которые начинаются и заканчиваются на одну букву.
     public static int wQer(ListGns x){
@@ -55,6 +72,15 @@ public class Main {
         }
         return z;
     }//wQer
+    public static int wiQer(ListGns x){
+        AtomicInteger z= new AtomicInteger();
+        ListIterator jn = new ListIterator(x);
+        jn.forEachRemaining(y->{
+            String h =y.getValue().toString();
+            if (h.charAt(0)==h.charAt(h.length()-1)) z.getAndIncrement();
+        });
+        return z.get();
+    }
     //Проверить, что каждое следующее слово в
     // списке начинается с последней буквы предыдущего.
     public static boolean wQtt(ListGns x){
@@ -80,6 +106,15 @@ public class Main {
         }
         return z;
     }//wQtq
+    public static int wiQtq(ListGns x){
+        int z=0;
+        ListIterator jn = new ListIterator(x);
+        String h = jn.next().getValue().toString();
+        while (jn.hasNext()){
+            if (h.equals(jn.next().getValue().toString())) z++;
+        }
+        return z;
+    }//wiQtq
     //Проверить, упорядочены ли элементы списка по алфавиту.
     public static boolean wQtb(ListGns x) {
         NodeGns[] y = x.toArray();
@@ -89,6 +124,17 @@ public class Main {
         }
         return true;
     }//wQtb
+    public static boolean wiQtb(ListGns x) {
+        ListIterator jn = new ListIterator(x);
+        String y = jn.next().getValue().toString();
+        String z;
+        while (jn.hasNext()){
+            z=jn.next().getValue().toString();
+            if (y.compareTo(z)>0) return false;
+            y=z;
+        }
+        return true;
+    }//wiQtb
     //Перевернуть список наоборот.
 
 }//class Main--------------------------------------------------------------
@@ -216,24 +262,26 @@ class ListInt {
 
 }//class List
 /*
-Найти среднее арифметическое значение элементов списка.
+1) Найти среднее арифметическое значение элементов списка.
 
-Перенести в начало списка его последний элемент.
+2) Перенести в начало списка его последний элемент.
 
-Перенести в конец списка его последний элемент.
+3) Перенести в конец списка его последний элемент.
 
-Поменять местами первый и последний элементы списка.
+4) Поменять местами первый и последний элементы списка.
 
-Определить количество слов в списке, которые начинаются и заканчиваются на одну букву.
+5) Определить количество слов в списке, которые начинаются и заканчиваются на одну букву.
 
-Проверить, что каждое следующее слово в списке начинается с последней буквы предыдущего.
+6) Проверить, что каждое следующее слово в списке начинается с последней буквы предыдущего.
 
-Определить количество слов в списке, которые совпадают с первым (последним) словом списка.
+7) Определить количество слов в списке, которые совпадают с первым (последним) словом списка.
 
-Проверить, упорядочены ли элементы списка по алфавиту.
+8) Проверить, упорядочены ли элементы списка по алфавиту.
 
-Определить, входит ли список L1 в L2.
-Перевернуть список наоборот.
+9) Определить, входит ли список L1 в L2.
+10)Перевернуть список наоборот.
+
+новое: Выполнить 4-5 заданий из самостоятельной работы используя механизм итераторов (там где это уместно)
  */
 class NodeGns<T> {//обобщения или generics
     private T value;
@@ -250,11 +298,13 @@ class NodeGns<T> {//обобщения или generics
 }//class NodeGns----------------------------------------------------------------
 class ListGns {
     private NodeGns head;
+    private int length;
 
-    ListGns() { this.head = null; }
-    ListGns(NodeGns head) { this.head = head; }
+    ListGns() { this.head = null; length=0;}
+    ListGns(NodeGns head) { this.head = head; length=1;}
 
     <T>ListGns(T ...vls){
+        length=vls.length;
         this.head=new NodeGns(vls[0]);
         if (vls.length>1){
             assert prnq("="+vls.length);
@@ -267,6 +317,7 @@ class ListGns {
     }//List---------------------------------------------------
 
     ListGns(NodeGns ...vls){
+        length=vls.length;
         this.head=new NodeGns(vls[0]);
         if (vls.length>1){
             assert prnq("="+vls.length);
@@ -275,8 +326,14 @@ class ListGns {
                 nodeTmp.setNextNode(new NodeGns(vls[i]));
                 nodeTmp = nodeTmp.getNextNode();
             }//for
+
         }//if
     }//List---------------------------------------------------
+    public NodeGns getHead() { return head; }
+    public void setHead(NodeGns head) { this.head = head; }
+    public int getLength() { return length; }
+    public void setLength(int length) { this.length = length; }
+
     public void printList() { printList(""); }
     public void printList(String str) {
         assert prnq("-----------"+str);
@@ -295,6 +352,7 @@ class ListGns {
             j++;
             nodeTmp = nodeTmp.getNextNode();
         }
+        length=j;
         return j;
     }//length---------------------------------------------
     public NodeGns[] toArray(){
@@ -334,6 +392,7 @@ class ListGns {
         while (nodeTmp.getNextNode() != null)
             nodeTmp = nodeTmp.getNextNode();
         nodeTmp.setNextNode(new NodeGns(value));
+        length++;
     }//push--------------------------------------------------
     public void push(NodeGns node) {//добавление в конец списка
         NodeGns nodeTmp = this.head;
@@ -341,8 +400,10 @@ class ListGns {
             nodeTmp = nodeTmp.getNextNode();
         nodeTmp.setNextNode(node);
         nodeTmp.getNextNode().setNextNode(null);
+        length++;
     }//push--------------------------------------------------
     public <T> void push(T value, int index) {
+        length++;
         if (index==0) {
             pushHead(value);
             return;
@@ -354,10 +415,12 @@ class ListGns {
         nodeTmp.setNextNode(newNode);
     }//push--------------------------------------------------
     public <T> void pushHead(T value) {//добавление в голову
+        length++;
         NodeGns node = new NodeGns(value, this.head);
         this.head = node;
     }//pushHead----------------------------------------------
     public void pushHead(NodeGns node){
+        length++;
         NodeGns nodeTmp = this.head;
         this.head = node;
         head.setNextNode(nodeTmp);
@@ -368,9 +431,11 @@ class ListGns {
             nodeTmp = nodeTmp.getNextNode();
         NodeGns z =nodeTmp.getNextNode();
         nodeTmp.setNextNode(null);
+        length--;
         return z;
     }//pop---------------------------------------------------------
     public void pop(int index){
+        length--;
         if (index==0) {
             this.head=head.getNextNode();
             return;
@@ -381,9 +446,43 @@ class ListGns {
         nodeTmp.setNextNode(nodeTmp.getNextNode().getNextNode());
     }//pop-----------------------------------------------------------
     public NodeGns popHead(){
+        length--;
         NodeGns z = head;
         this.head=head.getNextNode();
         z.setNextNode(null);
         return z;
     }//popHead-----------------------------------------------------
 }//class ListGns
+
+class ListIterator implements Iterator<NodeGns>{
+    private int count;
+    private ListGns list;
+    private NodeGns tmp;
+
+    public ListIterator(ListGns list) {
+        this.list = list;
+        tmp=list.getHead();
+        count=0;
+    }
+
+    @Override
+    public boolean hasNext() { return  count<list.getLength() ; }
+
+    @Override
+    public NodeGns next() {
+        count++;
+        NodeGns z=tmp;
+        tmp=tmp.getNextNode();
+        return z;
+    }
+
+    @Override
+    public void remove() {
+        Iterator.super.remove();
+    }
+
+    @Override
+    public void forEachRemaining(Consumer<? super NodeGns> action) {
+        Iterator.super.forEachRemaining(action);
+    }
+}//ListIterator
